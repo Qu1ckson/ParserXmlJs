@@ -84,6 +84,7 @@ function addRow()
 {
 	var a = document.getElementById("download_link");
 	a.style.display = "none";
+  
 	var	table =	document.getElementById( 'table_id' );
 	var newRow=table.insertRow(0);
 	for( var i = 0; i < cnstCNT_CELL; i++ )
@@ -92,7 +93,7 @@ function addRow()
 		newCell.innerHTML="<input type=\"text\" value=\"\" />";
 	}
 	var newCell = newRow.insertCell( cnstCNT_CELL );
-	newCell.innerHTML= " <select id=\"SelType\" onchange=\"onChangeSelect()\" ><option>String</option><option>Int</option><option>Boolean</option></select>"
+	newCell.innerHTML= " <select id=\"SelType\" onchange=\"onChangeSelect( this )\" ><option>String</option><option>Int</option><option>Boolean</option></select>"
 	newCell = newRow.insertCell( cnstCNT_CELL+1 );
 	newCell.innerHTML= " <input type=\"button\" value=\"x\" onclick=\"deleteRow(this)\">"
 }
@@ -103,13 +104,12 @@ function deleteRow(r)
 	document.getElementById('table_id').deleteRow(i);
 }
 
-function onChangeSelect()
+function onChangeSelect( select )
 {
-	var	select = document.getElementById( 'SelType' );
 	var	table =	document.getElementById( 'table_id' );
     var allRows = table.getElementsByTagName("tr");
-	var tr1 = allRows[0];
-	var cell = allRows[0].getElementsByTagName("td")[cnstCNT_CELL-1];
+	var i=select.parentNode.parentNode.rowIndex;
+	var cell = allRows[i].getElementsByTagName("td")[cnstCNT_CELL-1];
 	cell.innerHTML = getFieldByType( select.value, getDefaultValueByType( select.value ) );
 }
 
