@@ -136,11 +136,11 @@ function getTableInXML()
 {
 	var	table =	document.getElementById( 'table_id' );
     var allRows = table.getElementsByTagName("tr");
-	var outStr = "<?xml version=\"1.0\"?>";
-	outStr += "<Parameters>";
+	var outStr = "<?xml version=\"1.0\"?>\n";
+	outStr += "<Parameters>\n";
 	for( var i = 0; i < allRows.length; i++ )
 	{
-		outStr += "<Parameter>";
+		outStr += "<Parameter>\n";
 		var allCell = allRows[i].getElementsByTagName("td");
 		outStr += "<Id>" + allCell[0].childNodes[0].value + "</Id>\n";
 		outStr += "<Name>" + allCell[1].childNodes[0].value + "</Name>\n";
@@ -157,11 +157,11 @@ function getTableInXML()
 	return outStr;
 }
 
-
-
-function download(text, name, type) {
-  var a = document.getElementById("a");
+function download( name, type) {
+  var text = getTableInXML();
+  var a = document.getElementById("download_link");
   var file = new Blob([text], {type: type});
   a.href = URL.createObjectURL(file);
   a.download = name;
+  a.style.display = "inline";
 }
