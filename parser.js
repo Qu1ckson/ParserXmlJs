@@ -2,6 +2,8 @@ var cnstCNT_CELL = 4;
 
 function readXML()
 {
+	var a = document.getElementById("download_link");
+	a.style.display = "none";
 	var xml = new XMLHttpRequest();
 	xml.open( 'GET', 'input.xml' , false );
 	xml.send();
@@ -80,6 +82,8 @@ function getDefaultValueByType( type )
 
 function addRow()
 {
+	var a = document.getElementById("download_link");
+	a.style.display = "none";
 	var	table =	document.getElementById( 'table_id' );
 	var newRow=table.insertRow(0);
 	for( var i = 0; i < cnstCNT_CELL; i++ )
