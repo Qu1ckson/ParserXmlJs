@@ -157,19 +157,7 @@ function getTableInXML()
 	return outStr;
 }
 
-function onSave()
-{
-	var str = getTableInXML();
-	var ua = navigator.userAgent.toLowerCase();
-	//if(ua.indexOf("msie") != -1 && ua.indexOf("opera") == -1 && ua.indexOf("webtv") == -1) { //IE
-	 var mydoc = window.open();
-	 mydoc.document.write(str);
-	 mydoc.document.execCommand("saveAs",true,".xml");
-	//}
-	//else { //другие браузеры
-	// var mydoc = window.open("data:application/download;charset=utf-8;base64," + btoa(str));
-	//}
-}
+
 
 function download(text, name, type) {
   var a = document.getElementById("a");
