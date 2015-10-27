@@ -55,7 +55,7 @@ function identifyType( str )
 function checkNumber( input ) 
 {	
 	var value = input.value;
-	var Reg = new RegExp("^([+-]?)[0-9]+$");
+	var Reg = new RegExp("^([+-]?)[1-9][0-9]+$");
     if (Reg.test(value) && value <= MAX_INT_32) 
 	{
 		input.style.color = 'black';
