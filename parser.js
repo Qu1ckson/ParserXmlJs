@@ -55,7 +55,7 @@ function identifyType( str )
 function checkNumber( input ) 
 {	
 	var value = input.value;
-	var Reg = new RegExp("(^([+-]?)([1-9]+?)[0-9]*)|^0$");
+	var Reg = new RegExp("(^([+-]?)([1-9]+?)[0-9]*)|^0$|^$");
     if (Reg.test(value) && value <= MAX_INT_32) 
 	{
 		input.style.color = 'black';
@@ -149,7 +149,7 @@ function getXMLValueType( child )
 	if( child.type == "off" )
 		return "False";
 	
-	return child.type;
+	return child.value;
 }
 
 function getTableInXML()
