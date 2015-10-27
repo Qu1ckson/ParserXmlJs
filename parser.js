@@ -58,10 +58,10 @@ function checkNumber( input )
 	var Reg = new RegExp("^([+-]?)([1-9]+?)[0-9]*");
     if (Reg.test(value) && value <= MAX_INT_32) 
 	{
-		input.style.backgroundColor = 'white';
+		input.style.color = 'black';
 		return true;
 	}
-	input.style.backgroundColor = 'red';
+	input.style.color = 'red';
 	return false;
 }
 
