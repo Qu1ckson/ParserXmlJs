@@ -183,7 +183,10 @@ function getTableInXML()
 function download( name, type) {
   var text = getTableInXML();
   if( text == "" )
+  {
 	alert( "Fix error in table" );
+	return;
+  }
   var a = document.getElementById("download_link");
   var file = new Blob([text], {type: type});
   a.href = URL.createObjectURL(file);
