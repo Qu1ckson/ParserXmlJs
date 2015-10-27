@@ -1,9 +1,12 @@
 var cnstCNT_CELL = 4;
+var MAX_INT_32 =  2147483647;
 
 function readXML()
 {
 	var a = document.getElementById("download_link");
 	a.style.display = "none";
+	var add_button = document.getElementById("add_button");
+	add_button.style.display = "inline";
 	var xml = new XMLHttpRequest();
 	xml.open( 'GET', 'input.xml' , false );
 	xml.send();
@@ -13,7 +16,7 @@ function readXML()
 		xmlData = ( new DOMParser() ).parseFromString( xml.responseText, 'text/xml' );
 		var params = xmlData.getElementsByTagName( "Parameter" );
 		console.log(params);
-		var output = '';
+		var output = '<tr><td>Id</td><td>Name</td><td>Description</td><td>Type</td></tr>';
 		for( var i = 0; i < params.length; i++ )
 		{
 			var type = identifyType( params[i].getElementsByTagName( "Type" )[0].textContent );
@@ -49,6 +52,19 @@ function identifyType( str )
 	return '';
 }
 
+function checkNumber( input ) 
+{	
+	var value = input.value;
+	var Reg = new RegExp("^([+-]?)[0-9]+$");
+    if (Reg.test(value) && value <= MAX_INT_32) 
+	{
+		input.style.color = 'black';
+		return true;
+	}
+	input.style.color = 'red';
+	return false;
+}
+
 function getFieldByType( type, value )
 {
 	switch ( type ) 
@@ -58,7 +74,7 @@ function getFieldByType( type, value )
 			return "<input type=\"text\" />";
 			return "<input type=\"text\" value=" + value + " />";
 		case 'Int':
-			return "<input type=\"number\" value=" + value + " />";
+			return "<input type=\"number\" onchange=\"return checkNumber(this);\" value=" + value + " />";
 		case 'Boolean':
 			var val_checkbox = "";
 			if( value === "True" )
@@ -86,7 +102,7 @@ function addRow()
 	a.style.display = "none";
   
 	var	table =	document.getElementById( 'table_id' );
-	var newRow=table.insertRow(0);
+	var newRow=table.insertRow(1);
 	for( var i = 0; i < cnstCNT_CELL; i++ )
 	{
 		var newCell = newRow.insertCell(i);
@@ -126,14 +142,14 @@ function getXMLType( type )
 	}
 }
 
-function getXMLValueType( type )
+function getXMLValueType( child )
 {
-	if( type == "on" )
-	return "True";
-	if( type == "off" )
-	return "False";
+	if( child.type == "on" )
+		return "True";
+	if( child.type == "off" )
+		return "False";
 	
-	return type;
+	return child.type;
 }
 
 function getTableInXML()
@@ -142,7 +158,7 @@ function getTableInXML()
     var allRows = table.getElementsByTagName("tr");
 	var outStr = "<?xml version=\"1.0\"?>\n";
 	outStr += "<Parameters>\n";
-	for( var i = 0; i < allRows.length; i++ )
+	for( var i = 1; i < allRows.length; i++ )
 	{
 		outStr += "<Parameter>\n";
 		var allCell = allRows[i].getElementsByTagName("td");
@@ -153,7 +169,10 @@ function getTableInXML()
 		console.log( allCell[3].childNodes[0].getAttribute('type') );
 		var xmlType = getXMLType( allCell[3].childNodes[0].getAttribute('type') );
 		outStr += "<Type>" + xmlType + "</Type>\n";
-		outStr += "<Value>" + getXMLValueType( allCell[3].childNodes[0].value ) + "</Value>\n";
+		if( xmlType == "System.Int32" && !checkNumber( allCell[3].childNodes[0] ) )
+			return "";
+		var xmlValue = getXMLValueType( allCell[3].childNodes[0] );
+		outStr += "<Value>" + xmlValue + "</Value>\n";
 		console.log( allCell[3].childNodes[0] );
 		outStr += "</Parameter>";
 	}
@@ -163,9 +182,17 @@ function getTableInXML()
 
 function download( name, type) {
   var text = getTableInXML();
+  if( text == "" )
+	alert( "Fix error in table" );
   var a = document.getElementById("download_link");
   var file = new Blob([text], {type: type});
   a.href = URL.createObjectURL(file);
   a.download = name;
   a.style.display = "inline";
+}
+
+function onChangeTable()
+{
+  var a = document.getElementById("download_link");
+  a.style.display = "none";
 }
