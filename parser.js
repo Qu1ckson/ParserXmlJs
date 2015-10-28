@@ -66,6 +66,13 @@ function checkNumber( input )
 	return false;
 }
 
+function onKeyUpEvent(event, input)
+{
+	var i = parseInt( input.value, 10);
+	if( !isNaN(i) )
+		input.value = i;
+}
+
 function onKeyPressEvent( event, input )
 {
 	var res = true;
@@ -100,7 +107,7 @@ function getFieldByType( type, value )
 			return "<input type=\"text\" />";
 			return "<input type=\"text\" value=" + value + " />";
 		case 'Int':
-			return "<input type=\"text\" onpaste=\"return false\" digit=\"true\" onkeypress=\" return onKeyPressEvent(event, this)\" value=" + value + " />";
+			return "<input type=\"text\" onpaste=\"return false\" digit=\"true\" onkeyup=\" return onKeyUpEvent(event, this)\" onkeypress=\" return onKeyPressEvent(event, this)\" value=" + value + " />";
 		case 'Boolean':
 			var val_checkbox = "";
 			if( value === "True" )
