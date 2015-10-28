@@ -1,5 +1,6 @@
 var cnstCNT_CELL = 4;
 var MAX_INT_32 =  2147483647;
+var MAX_CNT_INT =  10;
 
 function readXML()
 {
@@ -65,6 +66,31 @@ function checkNumber( input )
 	return false;
 }
 
+function onKeyPressEvent( event, input )
+{
+	var res = true;
+	if(event.keyCode<48 || event.keyCode>57) 
+		res= false;
+	if(event.keyCode==45)
+	{
+		if( input.value.indexOf('-') == -1  && event.currentTarget.selectionEnd == 0 )
+			res = true;
+	}	
+	else if(event.keyCode==43)
+	{
+		if( input.value.indexOf('+') == -1  && event.currentTarget.selectionEnd == 0 )
+			res = true;
+	}	
+	if( res )
+	{
+		if( input.value.length+1 > MAX_CNT_INT )
+			res = false;
+	}
+	if( input.value.indexOf('0') == 0 )
+		input.value = "";
+	return res;
+}
+
 function getFieldByType( type, value )
 {
 	switch ( type ) 
@@ -74,7 +100,7 @@ function getFieldByType( type, value )
 			return "<input type=\"text\" />";
 			return "<input type=\"text\" value=" + value + " />";
 		case 'Int':
-			return "<input type=\"number\" onchange=\"return checkNumber(this);\" value=" + value + " />";
+			return "<input type=\"text\" digit=\"true\" onkeypress=\" return onKeyPressEvent(event, this)\" value=" + value + " />";
 		case 'Boolean':
 			var val_checkbox = "";
 			if( value === "True" )
@@ -129,14 +155,17 @@ function onChangeSelect( select )
 	cell.innerHTML = getFieldByType( select.value, getDefaultValueByType( select.value ) );
 }
 
-function getXMLType( type )
+function getXMLType( child )
 {
-	switch ( type ) 
+	switch ( child.getAttribute('type') ) 
 	{
-		case 'number':
-			return "System.Int32";
 		case 'text':
-			return "System.String";
+		{
+		    if( child.getAttribute('digit') == "true") 
+				return "System.Int32";
+			else
+				return "System.String";
+		}
 		case 'checkbox':
 			return "System.Boolean";
 	}
@@ -167,7 +196,7 @@ function getTableInXML()
 		outStr += "<Description>" + allCell[2].childNodes[0].value + "</Description>\n";
 
 		console.log( allCell[3].childNodes[0].getAttribute('type') );
-		var xmlType = getXMLType( allCell[3].childNodes[0].getAttribute('type') );
+		var xmlType = getXMLType( allCell[3].childNodes[0] );
 		outStr += "<Type>" + xmlType + "</Type>\n";
 		if( xmlType == "System.Int32" && !checkNumber( allCell[3].childNodes[0] ) )
 			return "";
