@@ -69,6 +69,8 @@ function checkNumber( input )
 function onKeyUpEvent(event, input)
 {
 	var i = parseInt( input.value, 10);
+	if( event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 8 )
+		return;
 	if( !isNaN(i) )
 		input.value = i;
 }
