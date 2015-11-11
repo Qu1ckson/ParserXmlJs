@@ -66,12 +66,18 @@ function checkNumber( input )
 	return false;
 }
 
+function onPaste(event, input)
+{	
+	var val = event.clipboardData.getData('Text');
+	return  (/^-?\d*$/.test(val));
+}
+
 function onKeyUpEvent(event, input)
 {
 	var i = parseInt( input.value, 10);
 	if( event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 8 )
 		return;
-	if( !isNaN(i) )
+	if( input.value.length >= 2 && (input.value[0] == "0" || (input.value[0] == "-" && input.value[1] == "0")) )
 		input.value = i;
 }
 
@@ -109,7 +115,7 @@ function getFieldByType( type, value )
 			return "<input type=\"text\" />";
 			return "<input type=\"text\" value=" + value + " />";
 		case 'Int':
-			return "<input type=\"text\" onpaste=\"return false\" digit=\"true\" onkeyup=\" return onKeyUpEvent(event, this)\" onkeypress=\" return onKeyPressEvent(event, this)\" value=" + value + " />";
+			return "<input type=\"text\" onpaste=\"return onPaste(event, this)\" digit=\"true\" onkeyup=\" return onKeyUpEvent(event, this)\" onkeypress=\" return onKeyPressEvent(event, this)\" value=" + value + " />";
 		case 'Boolean':
 			var val_checkbox = "";
 			if( value === "True" )
@@ -182,9 +188,9 @@ function getXMLType( child )
 
 function getXMLValueType( child )
 {
-	if( child.type == "on" )
+	if( child.type == "checkbox" && child.checked == true )
 		return "True";
-	if( child.type == "off" )
+	if( child.type == "checkbox" && child.checked == false )
 		return "False";
 	
 	return child.value;
@@ -218,7 +224,32 @@ function getTableInXML()
 	return outStr;
 }
 
+function checkTable()
+{
+	var	table =	document.getElementById( 'table_id' );
+    var allRows = table.getElementsByTagName("tr");
+	var boolExist = false;
+	for( var i = 1; i < allRows.length; i++ )
+	{
+		var allCell = allRows[i].getElementsByTagName("td");
+		var xmlType = getXMLType( allCell[3].childNodes[0] );
+		if( xmlType == "System.Boolean" )
+		{
+			boolExist = true;
+			var xmlValue = getXMLValueType( allCell[3].childNodes[0] );
+			if( xmlValue == "True" )
+				return true;
+		}
+	}
+	return boolExist ? false : true;
+}
+
 function download( name, type) {
+  if( !checkTable() )
+  {
+	alert( "Fix error in table" );
+		return;
+  }
   var text = getTableInXML();
   if( text == "" )
   {
