@@ -69,16 +69,35 @@ function checkNumber( input )
 function onPaste(event, input)
 {	
 	var val = event.clipboardData.getData('Text');
+	if( input.value >= MAX_INT_32 )
+	{
+		return false;
+	}
 	return  (/^-?\d*$/.test(val));
 }
 
+
 function onKeyUpEvent(event, input)
 {
-	var i = parseInt( input.value, 10);
 	if( event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 8 )
 		return;
-	if( input.value.length >= 2 && (input.value[0] == "0" || (input.value[0] == "-" && input.value[1] == "0")) )
-		input.value = i;
+	if (input.getAttribute('value').length < 2) { 
+		input.setAttribute("value", input.value); 
+		return; 
+	} 
+	var regular = new RegExp("(^([+-]?)([1-9]+?)[0-9]*$)|^0$"); 
+	if (!regular.test(input.value)) { 
+		input.value = input.getAttribute('value'); 
+		return; 
+	} 
+	input.setAttribute("value", input.value);
+}
+function onKeyDownEvent(event, input)
+{
+	if( input.selectionStart == 0 && event.keyCode == 96 && input.value.length >= 1 )
+		return false;
+	if( input.selectionStart == 1 && event.keyCode == 96 && input.value.length >= 1 && ( input.value[0] == "-" || input.value[0] == "+") )
+		return false;
 }
 
 function onKeyPressEvent( event, input )
@@ -115,7 +134,7 @@ function getFieldByType( type, value )
 			return "<input type=\"text\" />";
 			return "<input type=\"text\" value=" + value + " />";
 		case 'Int':
-			return "<input type=\"text\" onpaste=\"return onPaste(event, this)\" digit=\"true\" onkeyup=\" return onKeyUpEvent(event, this)\" onkeypress=\" return onKeyPressEvent(event, this)\" value=" + value + " />";
+			return "<input type=\"text\" onpaste=\"return onPaste(event, this)\" digit=\"true\" onkeydown=\" return onKeyDownEvent(event, this)\" onkeyup=\" return onKeyUpEvent(event, this)\" onkeypress=\" return onKeyPressEvent(event, this)\" value=" + value + " />";
 		case 'Boolean':
 			var val_checkbox = "";
 			if( value === "True" )
